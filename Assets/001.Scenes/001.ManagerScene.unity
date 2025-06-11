@@ -169,7 +169,7 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
-  slotCount: 8
+  slotCount: 12
   animalSprites:
   - m_AssetGUID: 610bbe033a80e754ab3268c255e13103
     m_SubObjectName: Altai mouse front
@@ -459,8 +459,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad16081b0c1f8564a9e37fdca03742cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultCapacity: 16
-  maxPoolSize: 16
+  defaultCapacity: 24
+  maxPoolSize: 24
   poolObjPrefabs:
   - {fileID: 5845531225531678714, guid: 7b13bdb322ce9864cbb3b8c98561d1cf, type: 3}
   - {fileID: 5282275595947863629, guid: 608d17a1d2678944e8d83680c9b8e71a, type: 3}

@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AssetReference mainScene; // 메인 씬 에셋 레퍼런스    
 
     [Header("게임 설정")]
-    [Range(4, 8)] public int slotCount;
+    [Range(4, 12)] public int slotCount;
 
     // 애니멀 스프라이트 랜덤 할당
     [SerializeField] private AssetReference[] animalSprites; // 애니멀 스프라이트들
