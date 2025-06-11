@@ -169,7 +169,7 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
-  slotCount: 6
+  slotCount: 8
   animalSprites:
   - m_AssetGUID: 610bbe033a80e754ab3268c255e13103
     m_SubObjectName: Altai mouse front

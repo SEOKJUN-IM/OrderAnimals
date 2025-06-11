@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -16,6 +19,10 @@ public class GameManager : MonoBehaviour
 
     // 플레이어 애니멀
     private Animal[] playerAnimals;
+
+    private Animal firstAnimal;
+    private Animal secondAnimal;
+    private List<Animal> canSwitchAnimals = new List<Animal>();
 
     private static GameManager _instance;
     public static GameManager Instance
@@ -53,6 +60,9 @@ public class GameManager : MonoBehaviour
     // 슬롯 켜주고 컴퓨터, 플레이어 구분, 위치 선정
     private void SetSlotsAndAnimals()
     {
+        // 플레이어 애니멀 담아둘 배열 생성
+        playerAnimals = new Animal[slotCount];
+
         // 애니멀 스프라이트 배열 생성
         MakeAnimalSpritesArray();
 
@@ -64,7 +74,7 @@ public class GameManager : MonoBehaviour
             slot.ownerType = (i % 2 != 0) ? OwnerType.Computer : OwnerType.Player; // 홀수 인덱스는 컴퓨터, 짝수 인덱스는 플레이어
             animal.ownerType = slot.ownerType; // 슬롯과 동일한 소유자 타입 설정
 
-            if (i % 2 != 0) // 홀수 인덱스 yPosition은 3f
+            if (i % 2 != 0) // 컴퓨터 애니멀 : 홀수 인덱스 yPosition은 3f
             {
                 slot.index = (i - 1) / 2; // 홀수 인덱스는 0부터 시작하는 인덱스
                 animal.index = slot.index; // 동물 인덱스도 동일하게 설정
@@ -74,15 +84,15 @@ public class GameManager : MonoBehaviour
             }
             else // 짝수 인덱스 yPosition은 -2f
             {
-                slot.index = i / 2; // 짝수 인덱스는 0부터 시작하는 인덱스
+                slot.index = i / 2; // 플레이어 애니멀 : 짝수 인덱스는 0부터 시작하는 인덱스
                 animal.index = slot.index; // 동물 인덱스도 동일하게 설정
 
                 SetAnimalSprites(animal); // 애니멀 스프라이트 설정
                 SetSlotPosition(slot, -2f);
+                playerAnimals[animal.index] = animal;
             }
 
-            animal.transform.position = slot.transform.position; // 동물 위치를 슬롯 위치로 설정
-            SetPlayerAnimals(animal); // 플레이어 애니멀 설정
+            animal.transform.position = slot.transform.position; // 동물 위치를 슬롯 위치로 설정            
         }
 
         ReleaseSpriteAssets(); // 사용한 스프라이트 에셋 해제
@@ -117,7 +127,7 @@ public class GameManager : MonoBehaviour
 
     private void MakeAnimalSpritesArray()
     {
-        randomSprites = animalSprites.OrderBy(x => Random.value).Take(slotCount).ToArray();
+        randomSprites = animalSprites.OrderBy(x => UnityEngine.Random.value).Take(slotCount).ToArray();
 
         animalSpritesArray = new Sprite[randomSprites.Length];
 
@@ -138,32 +148,68 @@ public class GameManager : MonoBehaviour
         {
             randomSprites[i].ReleaseAsset();
         }
-    }
-
-    private void SetPlayerAnimals(Animal animal)
-    {
-        playerAnimals = new Animal[slotCount];
-
-        for (int i = 0; i < playerAnimals.Length; i++)
-        {
-            if (animal.ownerType == OwnerType.Player && animal.index == i) playerAnimals[i] = animal;
-        }
-    }
+    }    
 
     #endregion
 
 
     #region Game Methods
 
-    public void MoveRight()
+    public void Select(Animal animal)
     {
+        if (firstAnimal == null) // 첫 번째 선택 애니멀 없다면
+        {
+            firstAnimal = animal; // 클릭한 것 첫 번째 선택 애니멀로
+            animal.animator.SetBool("Selected", !animal.animator.GetBool("Selected"));
 
+            if (firstAnimal == playerAnimals[0])
+                canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) + 1]); // 첫 번째 애니멀이 가장 왼쪽일 때
+            else if (firstAnimal == playerAnimals[playerAnimals.Length - 1])
+                canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) - 1]); // 첫 번째 애니멀이 가장 오른쪽일 때
+            else
+            {
+                canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) - 1]);
+                canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) + 1]);
+            }
+        }
+        else // 첫 번째 선택 애니멀 있다면
+        {
+            if (canSwitchAnimals.Contains(animal)) // 양 옆 교환 가능한 애니멀들 중 하나 클릭했다면
+            {
+                secondAnimal = animal; // 클릭한 것 두 번째 선택 애니멀로
+                animal.animator.SetBool("Selected", !animal.animator.GetBool("Selected"));
+                SwitchAnimals(); // 위치, 배열 순서 교환
+            }
+            else
+            {
+                Debug.Log("해당 애니멀은 교환할 수 없습니다.");
+            }
+        }
     }
 
-    public void MoveLeft()
+    public void SwitchAnimals()
     {
+        if (firstAnimal == null || secondAnimal == null) return;
+
+        // 첫 번째 애니멀과 두 번째 애니멀의 위치를 교환
+        Vector2 tempPosition = firstAnimal.transform.position;
+        firstAnimal.transform.DOMove(secondAnimal.transform.position, 0.5f).SetEase(Ease.OutBack);
+        secondAnimal.transform.DOMove(tempPosition, 0.5f).SetEase(Ease.OutBack);
+
+        // 첫 번째 애니멀과 두 번째 애니멀의 playerAnimals 내 순서를 교환
+        int firstIndex = Array.IndexOf(playerAnimals, firstAnimal);
+        int secondIndex = Array.IndexOf(playerAnimals, secondAnimal);
+        playerAnimals[firstIndex] = secondAnimal;
+        playerAnimals[secondIndex] = firstAnimal;        
+
+        // 첫 번째 애니멀과 두 번째 애니멀을 초기화
+        firstAnimal.animator.SetBool("Selected", false);
+        secondAnimal.animator.SetBool("Selected", false);
         
-    }
+        firstAnimal = null;
+        secondAnimal = null;
+        canSwitchAnimals.Clear();
+    }    
 
     #endregion
 

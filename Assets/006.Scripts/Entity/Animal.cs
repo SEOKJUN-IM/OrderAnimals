@@ -16,12 +16,13 @@ public class Animal : MonoBehaviour, IPoolable, IPointerDownHandler, IPointerEnt
 
     [Header("Animal Sprite")]
     public SpriteRenderer spriteRenderer;
-    [SerializeField] private Animator animator;
+    public Animator animator;
 
     public void OnPointerDown(PointerEventData eventData)
     {
         if (ownerType == OwnerType.Computer) return; // 컴퓨터 소유의 동물은 클릭할 수 없음
-        animator.SetBool("Selected", !animator.GetBool("Selected"));
+
+        GameManager.Instance.Select(this);        
     }
 
     public void OnPointerEnter(PointerEventData eventData)
