@@ -37,7 +37,7 @@ public class ObjectPoolManager : MonoBehaviour
         Initialize();
     }
 
-    private void Initialize()
+    public void Initialize()
     {
         foreach (var prefab in poolObjPrefabs)
         {

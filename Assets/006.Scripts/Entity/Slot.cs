@@ -7,4 +7,9 @@ public class Slot : MonoBehaviour, IPoolable
     public ObjectPool<GameObject> Pool { get => pool; set => pool = value; }
 
     public GameObject self => this.gameObject;
+
+    [Header("Type")]
+    public OwnerType ownerType; // 소유자 타입 (컴퓨터 또는 플레이어)
+
+    public int index;
 }

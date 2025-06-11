@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoadManager : MonoBehaviour
 {
+    public AssetReference mainScene;
+
     private static SceneLoadManager _instance;
     public static SceneLoadManager Instance
     {
@@ -40,8 +42,7 @@ public class SceneLoadManager : MonoBehaviour
         {
             SceneInstance sceneInstance = sceneHandle.Result;
 
-            await sceneInstance.ActivateAsync();
-            if (sceneInstance.Scene.isLoaded) GameManager.Instance.Initialize();
+            await sceneInstance.ActivateAsync();            
         }               
     }
 
