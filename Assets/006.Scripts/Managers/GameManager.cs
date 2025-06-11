@@ -9,9 +9,13 @@ public class GameManager : MonoBehaviour
     [Header("게임 설정")]
     [Range(4, 8)] public int slotCount;
 
+    // 애니멀 스프라이트 랜덤 할당
     [SerializeField] private AssetReference[] animalSprites; // 애니멀 스프라이트들
     private AssetReference[] randomSprites; // 랜덤으로 선택된 애니멀 스프라이트들
     private Sprite[] animalSpritesArray; // 애니멀 스프라이트 배열
+
+    // 플레이어 애니멀
+    private Animal[] playerAnimals;
 
     private static GameManager _instance;
     public static GameManager Instance
@@ -37,6 +41,7 @@ public class GameManager : MonoBehaviour
     }
 
     #region Initial Settings
+
     /// <summary>
     /// 게임 초기화를 위한 메서드
     /// </summary>
@@ -64,7 +69,6 @@ public class GameManager : MonoBehaviour
                 slot.index = (i - 1) / 2; // 홀수 인덱스는 0부터 시작하는 인덱스
                 animal.index = slot.index; // 동물 인덱스도 동일하게 설정
 
-
                 SetAnimalSprites(animal); // 애니멀 스프라이트 설정
                 SetSlotPosition(slot, 3f);
             }
@@ -78,6 +82,7 @@ public class GameManager : MonoBehaviour
             }
 
             animal.transform.position = slot.transform.position; // 동물 위치를 슬롯 위치로 설정
+            SetPlayerAnimals(animal); // 플레이어 애니멀 설정
         }
 
         ReleaseSpriteAssets(); // 사용한 스프라이트 에셋 해제
@@ -99,7 +104,7 @@ public class GameManager : MonoBehaviour
             }
         }
         else // 슬롯 수 짝수일 때
-        {            
+        {
             for (int i = 1; i <= slotCount / 2; i++)
             {
                 slotPositions[slotCount / 2 - i] = -i * 1.2f + 0.6f; // 왼쪽 슬롯 위치 설정
@@ -119,12 +124,12 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < animalSpritesArray.Length; i++)
         {
             animalSpritesArray[i] = randomSprites[i].LoadAssetAsync<Sprite>().WaitForCompletion();
-        }        
+        }
     }
 
     private void SetAnimalSprites(Animal animal)
     {
-        animal.spriteRenderer.sprite = animalSpritesArray[animal.index];        
+        animal.spriteRenderer.sprite = animalSpritesArray[animal.index];
     }
 
     private void ReleaseSpriteAssets()
@@ -135,10 +140,35 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void SetPlayerAnimals(Animal animal)
+    {
+        playerAnimals = new Animal[slotCount];
+
+        for (int i = 0; i < playerAnimals.Length; i++)
+        {
+            if (animal.ownerType == OwnerType.Player && animal.index == i) playerAnimals[i] = animal;
+        }
+    }
+
+    #endregion
+
+
+    #region Game Methods
+
+    public void MoveRight()
+    {
+
+    }
+
+    public void MoveLeft()
+    {
+        
+    }
+
+    #endregion
+
     public void StartGame()
     {
         SceneLoadManager.Instance.LoadScene(mainScene);
     }
-    
-    #endregion
 }
