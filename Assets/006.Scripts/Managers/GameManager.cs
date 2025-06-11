@@ -1,7 +1,11 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private AssetReference mainScene; // 메인 씬 에셋 레퍼런스    
+
+    [Header("게임 설정")]
     [Range(3, 6)] public int slotCount;
 
     private static GameManager _instance;
@@ -82,23 +86,20 @@ public class GameManager : MonoBehaviour
             }
         }
         else // 슬롯 수 짝수일 때
-        {
-            slotPositions[slotCount / 2] = -0.6f; // 중앙 왼쪽 슬롯 위치 설정
+        {            
             for (int i = 1; i <= slotCount / 2; i++)
             {
-                slotPositions[slotCount / 2 - i] = -i * 1.2f; // 왼쪽 슬롯 위치 설정
-                slotPositions[slotCount / 2 + i] = i * 1.2f; // 오른쪽 슬롯 위치 설정
+                slotPositions[slotCount / 2 - i] = -i * 1.2f + 0.6f; // 왼쪽 슬롯 위치 설정
+                slotPositions[slotCount / 2 + i - 1] = (i - 1) * 1.2f + 0.6f; // 오른쪽 슬롯 위치 설정
             }
         }
 
         slot.transform.position = new Vector2(slotPositions[slot.index], yPosition);
-    }    
+    }
 
     public void StartGame()
     {
-        SceneLoadManager.Instance.LoadScene(SceneLoadManager.Instance.mainScene);
-
-        Initialize();
+        SceneLoadManager.Instance.LoadScene(mainScene);                
     }
     
     #endregion

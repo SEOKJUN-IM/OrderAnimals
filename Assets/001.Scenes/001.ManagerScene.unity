@@ -163,7 +163,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 635fc8b82ac9a8e43876686145c36b0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotCount: 3
+  mainScene:
+    m_AssetGUID: adf1862ef066bde44ac56847bc51e968
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  slotCount: 4
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -429,12 +435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a25a8e854c85d89429a3077354a52f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainScene:
-    m_AssetGUID: adf1862ef066bde44ac56847bc51e968
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
+  mainSceneName: 003.MainScene
 --- !u!4 &1104492917
 Transform:
   m_ObjectHideFlags: 0
