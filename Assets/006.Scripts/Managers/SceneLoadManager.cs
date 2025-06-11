@@ -1,0 +1,52 @@
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityEngine.SceneManagement;
+
+public class SceneLoadManager : MonoBehaviour
+{
+    private static SceneLoadManager _instance;
+    public static SceneLoadManager Instance
+    {
+        get
+        {
+            if (_instance == null) _instance = new GameObject("SceneLoadManager").AddComponent<SceneLoadManager>();
+            return _instance;
+        }
+    }
+
+    void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            if (_instance != this) Destroy(gameObject);
+        }        
+    }
+
+    private async UniTask LoadSceneAsync(AssetReference sceneReference)
+    {
+        var sceneHandle = Addressables.LoadSceneAsync(sceneReference, LoadSceneMode.Single, false);
+
+        await UniTask.WaitUntil(() => sceneHandle.Status == AsyncOperationStatus.Succeeded);
+
+        if (sceneHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            SceneInstance sceneInstance = sceneHandle.Result;
+
+            await sceneInstance.ActivateAsync();
+            if (sceneInstance.Scene.isLoaded) GameManager.Instance.Initialize();
+        }               
+    }
+
+    public void LoadScene(AssetReference sceneReference)
+    {
+        LoadSceneAsync(sceneReference).Forget();
+    }
+}
