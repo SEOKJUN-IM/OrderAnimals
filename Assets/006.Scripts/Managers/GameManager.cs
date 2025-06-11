@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void Initialize()
     {
-        SetSlotsAndAnimals();
+        SetSlotsAndAnimals();        
     }
 
     // 슬롯 켜주고 컴퓨터, 플레이어 구분, 위치 선정
@@ -96,6 +96,8 @@ public class GameManager : MonoBehaviour
         }
 
         ReleaseSpriteAssets(); // 사용한 스프라이트 에셋 해제
+
+        RandomPlayerAnimals(); // 플레이어 애니멀 랜덤 배치
     }
 
     // 슬롯 배치
@@ -125,6 +127,7 @@ public class GameManager : MonoBehaviour
         slot.transform.position = new Vector2(slotPositions[slot.index], yPosition);
     }
 
+    // 애니멀 스프라이트 에셋에서 랜덤으로 가져와 slotCount 크기 배열 생성
     private void MakeAnimalSpritesArray()
     {
         randomSprites = animalSprites.OrderBy(x => UnityEngine.Random.value).Take(slotCount).ToArray();
@@ -137,16 +140,38 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // 애니멀 스프라이트 할당
     private void SetAnimalSprites(Animal animal)
     {
         animal.spriteRenderer.sprite = animalSpritesArray[animal.index];
     }
 
+    // 애니멀 스프라이트 할당 후 에셋 릴리즈
     private void ReleaseSpriteAssets()
     {
         for (int i = 0; i < randomSprites.Length; i++)
         {
             randomSprites[i].ReleaseAsset();
+        }
+    }
+
+    // 플레이어 애니멀 배열 랜덤 섞기 & 맞게 배치
+    private void RandomPlayerAnimals()
+    {
+        // 기존 위치 저장
+        Vector2[] tempPos = new Vector2[playerAnimals.Length];
+
+        for (int i = 0; i < playerAnimals.Length; i++)
+        {
+            tempPos[i] = playerAnimals[i].transform.position;
+        }
+
+        // playerAnimals 랜덤으로 섞기
+        playerAnimals = playerAnimals.OrderBy(x => UnityEngine.Random.value).Take(playerAnimals.Length).ToArray();
+
+        for (int i = 0; i < playerAnimals.Length; i++)
+        {
+            playerAnimals[i].transform.position = tempPos[i]; // 재배치
         }
     }    
 
@@ -182,7 +207,8 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("해당 애니멀은 교환할 수 없습니다.");
+                if (firstAnimal == animal) CancelSelect();
+                else Debug.Log("해당 애니멀은 교환할 수 없습니다.");
             }
         }
     }
@@ -209,6 +235,15 @@ public class GameManager : MonoBehaviour
         firstAnimal = null;
         secondAnimal = null;
         canSwitchAnimals.Clear();
+    }
+
+    public void CancelSelect()
+    {
+        if (firstAnimal != null)
+        {
+            firstAnimal.animator.SetBool("Selected", false);
+            firstAnimal = null;
+        }
     }    
 
     #endregion
