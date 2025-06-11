@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -6,7 +7,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AssetReference mainScene; // 메인 씬 에셋 레퍼런스    
 
     [Header("게임 설정")]
-    [Range(3, 6)] public int slotCount;
+    [Range(4, 8)] public int slotCount;
+
+    [SerializeField] private AssetReference[] animalSprites; // 애니멀 스프라이트들
+    private AssetReference[] randomSprites; // 랜덤으로 선택된 애니멀 스프라이트들
+    private Sprite[] animalSpritesArray; // 애니멀 스프라이트 배열
 
     private static GameManager _instance;
     public static GameManager Instance
@@ -31,7 +36,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    #region Public Methods
+    #region Initial Settings
     /// <summary>
     /// 게임 초기화를 위한 메서드
     /// </summary>
@@ -41,8 +46,11 @@ public class GameManager : MonoBehaviour
     }
 
     // 슬롯 켜주고 컴퓨터, 플레이어 구분, 위치 선정
-    public void SetSlotsAndAnimals()
+    private void SetSlotsAndAnimals()
     {
+        // 애니멀 스프라이트 배열 생성
+        MakeAnimalSpritesArray();
+
         for (int i = 0; i < slotCount * 2; i++)
         {
             Slot slot = ObjectPoolManager.Instance.Get("Slot").GetComponent<Slot>();
@@ -56,6 +64,8 @@ public class GameManager : MonoBehaviour
                 slot.index = (i - 1) / 2; // 홀수 인덱스는 0부터 시작하는 인덱스
                 animal.index = slot.index; // 동물 인덱스도 동일하게 설정
 
+
+                SetAnimalSprites(animal); // 애니멀 스프라이트 설정
                 SetSlotPosition(slot, 3f);
             }
             else // 짝수 인덱스 yPosition은 -2f
@@ -63,15 +73,18 @@ public class GameManager : MonoBehaviour
                 slot.index = i / 2; // 짝수 인덱스는 0부터 시작하는 인덱스
                 animal.index = slot.index; // 동물 인덱스도 동일하게 설정
 
+                SetAnimalSprites(animal); // 애니멀 스프라이트 설정
                 SetSlotPosition(slot, -2f);
             }
 
             animal.transform.position = slot.transform.position; // 동물 위치를 슬롯 위치로 설정
         }
+
+        ReleaseSpriteAssets(); // 사용한 스프라이트 에셋 해제
     }
 
     // 슬롯 배치
-    public void SetSlotPosition(Slot slot, float yPosition)
+    private void SetSlotPosition(Slot slot, float yPosition)
     {
         float[] slotPositions = new float[slotCount];
 
@@ -97,9 +110,34 @@ public class GameManager : MonoBehaviour
         slot.transform.position = new Vector2(slotPositions[slot.index], yPosition);
     }
 
+    private void MakeAnimalSpritesArray()
+    {
+        randomSprites = animalSprites.OrderBy(x => Random.value).Take(slotCount).ToArray();
+
+        animalSpritesArray = new Sprite[randomSprites.Length];
+
+        for (int i = 0; i < animalSpritesArray.Length; i++)
+        {
+            animalSpritesArray[i] = randomSprites[i].LoadAssetAsync<Sprite>().WaitForCompletion();
+        }        
+    }
+
+    private void SetAnimalSprites(Animal animal)
+    {
+        animal.spriteRenderer.sprite = animalSpritesArray[animal.index];        
+    }
+
+    private void ReleaseSpriteAssets()
+    {
+        for (int i = 0; i < randomSprites.Length; i++)
+        {
+            randomSprites[i].ReleaseAsset();
+        }
+    }
+
     public void StartGame()
     {
-        SceneLoadManager.Instance.LoadScene(mainScene);                
+        SceneLoadManager.Instance.LoadScene(mainScene);
     }
     
     #endregion

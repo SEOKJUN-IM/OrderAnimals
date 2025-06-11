@@ -12,4 +12,7 @@ public class Animal : MonoBehaviour, IPoolable
     public OwnerType ownerType; // 소유자 타입 (컴퓨터 또는 플레이어)
 
     public int index;
+
+    [Header("Animal Sprite")]
+    public SpriteRenderer spriteRenderer;    
 }

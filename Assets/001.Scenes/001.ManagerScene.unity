@@ -169,7 +169,80 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
-  slotCount: 4
+  slotCount: 6
+  animalSprites:
+  - m_AssetGUID: 610bbe033a80e754ab3268c255e13103
+    m_SubObjectName: Altai mouse front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 6b586357d505cab499d81556d936eb7b
+    m_SubObjectName: Amur tiger front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 63cfdc849c1e3904f8d6004cce7dc8fe
+    m_SubObjectName: barn owl front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 7ca58654aae67dd4c8c29f98313fad31
+    m_SubObjectName: beaver front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 5cdf5fc89198cfb40a24bafdaecd3a3b
+    m_SubObjectName: black swift front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: f1094bdf080efbd47bfd8058f1a66bab
+    m_SubObjectName: cheetah front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 4be82c2dbb5f8664d916cfcaa04ad500
+    m_SubObjectName: common fox front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 3ecbcc06598036d4cbbc0e1331003904
+    m_SubObjectName: Mountain ground squirrel front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 38332d41df7af52429359b33ed463964
+    m_SubObjectName: Osprey front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 42dc140daa68a4c48b9f917ffd909fbc
+    m_SubObjectName: white hare front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: af13bdfed5e41c34b8e0c9bd73227203
+    m_SubObjectName: wolf front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  - m_AssetGUID: 78460ce208fcdb444839438bee750ce9
+    m_SubObjectName: Yak front
+    m_SubObjectType: UnityEngine.Sprite, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,8 +459,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad16081b0c1f8564a9e37fdca03742cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultCapacity: 12
-  maxPoolSize: 12
+  defaultCapacity: 16
+  maxPoolSize: 16
   poolObjPrefabs:
   - {fileID: 5845531225531678714, guid: 7b13bdb322ce9864cbb3b8c98561d1cf, type: 3}
   - {fileID: 5282275595947863629, guid: 608d17a1d2678944e8d83680c9b8e71a, type: 3}

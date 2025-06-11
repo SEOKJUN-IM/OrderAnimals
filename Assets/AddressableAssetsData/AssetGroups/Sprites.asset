@@ -14,7 +14,67 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Sprites
   m_GUID: c0f835fe19c817440a1fb47bc6cd8d4d
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 38332d41df7af52429359b33ed463964
+    m_Address: Assets/002.Sprites/Osprey front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ecbcc06598036d4cbbc0e1331003904
+    m_Address: Assets/002.Sprites/Mountain ground squirrel front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42dc140daa68a4c48b9f917ffd909fbc
+    m_Address: Assets/002.Sprites/white hare front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4be82c2dbb5f8664d916cfcaa04ad500
+    m_Address: Assets/002.Sprites/common fox front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5cdf5fc89198cfb40a24bafdaecd3a3b
+    m_Address: Assets/002.Sprites/black swift front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 610bbe033a80e754ab3268c255e13103
+    m_Address: Assets/002.Sprites/Altai mouse front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 63cfdc849c1e3904f8d6004cce7dc8fe
+    m_Address: Assets/002.Sprites/barn owl front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6b586357d505cab499d81556d936eb7b
+    m_Address: Assets/002.Sprites/Amur tiger front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78460ce208fcdb444839438bee750ce9
+    m_Address: Assets/002.Sprites/Yak front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7ca58654aae67dd4c8c29f98313fad31
+    m_Address: Assets/002.Sprites/beaver front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af13bdfed5e41c34b8e0c9bd73227203
+    m_Address: Assets/002.Sprites/wolf front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f1094bdf080efbd47bfd8058f1a66bab
+    m_Address: Assets/002.Sprites/cheetah front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 177141fb10b00484e96f6d2aa0d4e847, type: 2}
   m_SchemaSet:
