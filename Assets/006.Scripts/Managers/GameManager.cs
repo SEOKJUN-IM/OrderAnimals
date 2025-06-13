@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -11,6 +12,12 @@ public class GameManager : MonoBehaviour
 
     [Header("게임 설정")]
     [Range(4, 12)] public int slotCount;
+
+    [Header("게임 UI")]
+    [SerializeField] private TextMeshProUGUI warningText;
+    [SerializeField] private GameObject selectedMarks;
+    [SerializeField] private GameObject leftMark;
+    [SerializeField] private GameObject rightMark;
 
     // 애니멀 스프라이트 랜덤 할당
     [SerializeField] private AssetReference[] animalSprites; // 애니멀 스프라이트들
@@ -187,14 +194,27 @@ public class GameManager : MonoBehaviour
             firstAnimal = animal; // 클릭한 것 첫 번째 선택 애니멀로
             animal.animator.SetBool("Selected", !animal.animator.GetBool("Selected"));
 
+            selectedMarks.SetActive(true);
+            selectedMarks.transform.position = Camera.main.WorldToScreenPoint(firstAnimal.transform.position + Vector3.up);
+
             if (firstAnimal == playerAnimals[0])
+            {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) + 1]); // 첫 번째 애니멀이 가장 왼쪽일 때
+                leftMark.SetActive(false);
+                rightMark.SetActive(true);
+            }
             else if (firstAnimal == playerAnimals[playerAnimals.Length - 1])
+            {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) - 1]); // 첫 번째 애니멀이 가장 오른쪽일 때
+                leftMark.SetActive(true);
+                rightMark.SetActive(false);
+            }
             else
             {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) - 1]);
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) + 1]);
+                leftMark.SetActive(true);
+                rightMark.SetActive(true);
             }
         }
         else // 첫 번째 선택 애니멀 있다면
@@ -208,7 +228,14 @@ public class GameManager : MonoBehaviour
             else
             {
                 if (firstAnimal == animal) CancelSelect();
-                else Debug.Log("해당 애니멀은 교환할 수 없습니다.");
+                else
+                {
+                    if (warningText.gameObject.activeSelf) return;
+
+                    warningText.color = Color.white;
+                    warningText.gameObject.SetActive(true);
+                    warningText.DOFade(0f, 0.75f).SetEase(Ease.InExpo).onComplete += () => warningText.gameObject.SetActive(false);                   
+                }
             }
         }
     }
@@ -216,6 +243,9 @@ public class GameManager : MonoBehaviour
     public void SwitchAnimals()
     {
         if (firstAnimal == null || secondAnimal == null) return;
+
+        // 첫 번째 애니멀 선택 표시 해제
+        selectedMarks.SetActive(false);
 
         // 첫 번째 애니멀과 두 번째 애니멀의 위치를 교환
         Vector2 tempPosition = firstAnimal.transform.position;
@@ -242,6 +272,7 @@ public class GameManager : MonoBehaviour
         if (firstAnimal != null)
         {
             firstAnimal.animator.SetBool("Selected", false);
+            selectedMarks.SetActive(false);
             firstAnimal = null;
         }
     }    
