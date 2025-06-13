@@ -13,17 +13,17 @@ public class Slot : MonoBehaviour, IPoolable
 
     public SpriteRenderer spriteRenderer;
 
-    public Animal curAnimal;
+    public Animal curAnimal;    
 
-    void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        Animal animal = collision.GetComponent<Animal>();
-        curAnimal = animal;
+        if (other.TryGetComponent(out Animal animal))
+        {
+            curAnimal = animal;
 
-        if (curAnimal == null) return;
-
-        if (curAnimal.index == index) spriteRenderer.color = Color.green;
-        else if (Mathf.Abs(curAnimal.index - index) == 1) spriteRenderer.color = Color.orange;
-        else spriteRenderer.color = Color.red;
+            if (curAnimal.index == index) spriteRenderer.color = Color.green;
+            else if (Mathf.Abs(curAnimal.index - index) == 1) spriteRenderer.color = Color.orange;
+            else spriteRenderer.color = Color.red;            
+        }
     }
 }

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -12,36 +12,27 @@ public class GameManager : MonoBehaviour
     {
         Normal,
         Blind
-    }
-
-    public GameMode curGameMode;
-
-    [SerializeField] private AssetReference mainScene; // 메인 씬 에셋 레퍼런스    
+    }       
 
     [Header("게임 설정")]
+    public GameMode curGameMode;
     [Range(4, 12)] public int animalCount;
 
-    [Header("게임 UI")]
-    [SerializeField] private TextMeshProUGUI warningText;
-    [SerializeField] private GameObject selectedMarks;
-    [SerializeField] private GameObject leftMark;
-    [SerializeField] private GameObject rightMark;
-    [SerializeField] private GameObject switchTitleText;
-    [SerializeField] private TextMeshProUGUI switchCountText;
-    private int switchCount;
-
-    // 애니멀 스프라이트 랜덤 할당
+    [Header("에셋")]
+    [SerializeField] private AssetReference mainScene; // 메인 씬 에셋 레퍼런스 
     [SerializeField] private AssetReference[] animalSprites; // 애니멀 스프라이트들
     private AssetReference[] randomSprites; // 랜덤으로 선택된 애니멀 스프라이트들
     private Sprite[] animalSpritesArray; // 애니멀 스프라이트 배열
 
     // 플레이어 애니멀 & 슬롯
     private Animal[] playerAnimals;
-    public Slot[] playerSlots;
+    private Slot[] playerSlots;
 
     private Animal firstAnimal;
     private Animal secondAnimal;
     private List<Animal> canSwitchAnimals = new List<Animal>();
+
+    private int switchCount; // 교환 횟수
 
     private static GameManager _instance;
     public static GameManager Instance
@@ -72,12 +63,12 @@ public class GameManager : MonoBehaviour
     /// 게임 초기화를 위한 메서드
     /// </summary>
     public void Initialize()
-    {
+    {        
         switchCount = 0;
-        switchCountText.text = switchCount.ToString();
+        UIManager.Instance.switchCountText.text = switchCount.ToString();
 
-        switchTitleText.SetActive(true);
-        switchCountText.gameObject.SetActive(true);
+        UIManager.Instance.switchTitleText.SetActive(true);
+        UIManager.Instance.switchCountText.gameObject.SetActive(true);
 
         SetSlotsAndAnimals();        
     }
@@ -221,27 +212,27 @@ public class GameManager : MonoBehaviour
             firstAnimal = animal; // 클릭한 것 첫 번째 선택 애니멀로
             animal.animator.SetBool("Selected", !animal.animator.GetBool("Selected"));
 
-            selectedMarks.SetActive(true);
-            selectedMarks.transform.position = Camera.main.WorldToScreenPoint(firstAnimal.transform.position + Vector3.up);
+            UIManager.Instance.selectedMarks.SetActive(true);
+            UIManager.Instance.selectedMarks.transform.position = Camera.main.WorldToScreenPoint(firstAnimal.transform.position + Vector3.up);
 
             if (firstAnimal == playerAnimals[0])
             {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) + 1]); // 첫 번째 애니멀이 가장 왼쪽일 때
-                leftMark.SetActive(false);
-                rightMark.SetActive(true);
+                UIManager.Instance.leftMark.SetActive(false);
+                UIManager.Instance.rightMark.SetActive(true);
             }
             else if (firstAnimal == playerAnimals[playerAnimals.Length - 1])
             {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) - 1]); // 첫 번째 애니멀이 가장 오른쪽일 때
-                leftMark.SetActive(true);
-                rightMark.SetActive(false);
+                UIManager.Instance.leftMark.SetActive(true);
+                UIManager.Instance.rightMark.SetActive(false);
             }
             else
             {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) - 1]);
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) + 1]);
-                leftMark.SetActive(true);
-                rightMark.SetActive(true);
+                UIManager.Instance.leftMark.SetActive(true);
+                UIManager.Instance.rightMark.SetActive(true);
             }
         }
         else // 첫 번째 선택 애니멀 있다면
@@ -251,17 +242,18 @@ public class GameManager : MonoBehaviour
                 secondAnimal = animal; // 클릭한 것 두 번째 선택 애니멀로
                 animal.animator.SetBool("Selected", !animal.animator.GetBool("Selected"));
                 SwitchAnimals(); // 위치, 배열 순서 교환
+                Clear().Forget(); // 클리어 판단
             }
             else
             {
                 if (firstAnimal == animal) CancelSelect();
                 else
                 {
-                    if (warningText.gameObject.activeSelf) return;
+                    if (UIManager.Instance.warningText.gameObject.activeSelf) return;
 
-                    warningText.color = Color.white;
-                    warningText.gameObject.SetActive(true);
-                    warningText.DOFade(0f, 0.75f).SetEase(Ease.InExpo).onComplete += () => warningText.gameObject.SetActive(false);                   
+                    UIManager.Instance.warningText.color = Color.white;
+                    UIManager.Instance.warningText.gameObject.SetActive(true);
+                    UIManager.Instance.warningText.DOFade(0f, 0.75f).SetEase(Ease.InExpo).onComplete += () => UIManager.Instance.warningText.gameObject.SetActive(false);
                 }
             }
         }
@@ -272,7 +264,7 @@ public class GameManager : MonoBehaviour
         if (firstAnimal == null || secondAnimal == null) return;
 
         // 첫 번째 애니멀 선택 표시 해제
-        selectedMarks.SetActive(false);
+        UIManager.Instance.selectedMarks.SetActive(false);
 
         // 첫 번째 애니멀과 두 번째 애니멀의 위치를 교환
         Vector2 tempPosition = firstAnimal.transform.position;
@@ -294,7 +286,7 @@ public class GameManager : MonoBehaviour
         canSwitchAnimals.Clear();
 
         switchCount++;
-        switchCountText.text = switchCount.ToString();
+        UIManager.Instance.switchCountText.text = switchCount.ToString();        
     }
 
     public void CancelSelect()
@@ -302,10 +294,20 @@ public class GameManager : MonoBehaviour
         if (firstAnimal != null)
         {
             firstAnimal.animator.SetBool("Selected", false);
-            selectedMarks.SetActive(false);
+            UIManager.Instance.selectedMarks.SetActive(false);
             firstAnimal = null;
         }
-    }    
+    }
+
+    private async UniTask Clear()
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5d));
+
+        if (playerSlots.All(x => x.index == x.curAnimal.index))
+        {
+            Debug.Log("Clear");
+        }
+    }
 
     #endregion
 
