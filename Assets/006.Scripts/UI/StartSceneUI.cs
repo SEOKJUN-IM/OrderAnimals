@@ -7,6 +7,6 @@ public class StartSceneUI : MonoBehaviour
 
     void Awake()
     {
-        gameStartBtn.onClick.AddListener(GameManager.Instance.StartGame);
+        gameStartBtn.onClick.AddListener(GameManager.Instance.GoGameScene);
     }
 }

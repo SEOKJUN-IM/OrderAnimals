@@ -12,13 +12,14 @@ public class GameManager : MonoBehaviour
     {
         Normal,
         Blind
-    }       
+    }
 
     [Header("게임 설정")]
     [SerializeField] private GameMode curGameMode;
     [SerializeField, Range(4, 12)] private int animalCount;
 
     [Header("에셋")]
+    [SerializeField] private AssetReference mainScene; // 메인 씬 에셋 레퍼런스
     [SerializeField] private AssetReference gameScene; // 게임 씬 에셋 레퍼런스 
     [SerializeField] private AssetReference[] animalSprites; // 애니멀 스프라이트들
     private AssetReference[] randomSprites; // 랜덤으로 선택된 애니멀 스프라이트들
@@ -26,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     // 컴퓨터 애니멀
     private Animal[] computerAnimals;
-    
+
     // 플레이어 애니멀 & 슬롯
     private Animal[] playerAnimals;
     private Slot[] playerSlots;
@@ -36,6 +37,10 @@ public class GameManager : MonoBehaviour
     private List<Animal> canSwitchAnimals = new List<Animal>();
 
     private int switchCount; // 교환 횟수
+
+    // 다시하기 위한 저장
+    private Animal[] savedAnimals;
+    private Vector2[] savedPositions;
 
     private static GameManager _instance;
     public static GameManager Instance
@@ -66,14 +71,15 @@ public class GameManager : MonoBehaviour
     /// 게임 초기화를 위한 메서드
     /// </summary>
     public void Initialize()
-    {        
+    {
         switchCount = 0;
         UIManager.Instance.SwitchCountText.text = switchCount.ToString();
 
         UIManager.Instance.SwitchTitleText.SetActive(true);
         UIManager.Instance.SwitchCountText.gameObject.SetActive(true);
+        UIManager.Instance.ClearWindow.SetActive(false);
 
-        SetSlotsAndAnimals();        
+        SetSlotsAndAnimals();
     }
 
     // 슬롯 켜주고 컴퓨터, 플레이어 구분, 위치 선정
@@ -91,7 +97,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < animalCount * 2; i++)
         {
-            Animal animal = ObjectPoolManager.Instance.Get("Animal").GetComponent<Animal>();            
+            Animal animal = ObjectPoolManager.Instance.Get("Animal").GetComponent<Animal>();
 
             animal.OwnerType = (i % 2 != 0) ? OwnerType.Computer : OwnerType.Player; // 홀수 인덱스는 컴퓨터, 짝수 인덱스는 플레이어            
 
@@ -124,12 +130,16 @@ public class GameManager : MonoBehaviour
             playerSlots[slot.Index] = slot;
 
             if (curGameMode == GameMode.Normal) slot.SpriteRenderer.gameObject.SetActive(false);
-            else slot.SpriteRenderer.gameObject.transform.position += Vector3.up * 5f;
+            else if (curGameMode == GameMode.Blind)
+            {
+                slot.SpriteRenderer.gameObject.SetActive(true);
+                slot.SpriteRenderer.gameObject.transform.position = playerAnimals[i].transform.position + Vector3.up * 5f;
+            }
         }
 
         ReleaseSpriteAssets(); // 사용한 스프라이트 에셋 해제
 
-        RandomPlayerAnimals(); // 플레이어 애니멀 랜덤 배치
+        ShufflePlayerAnimals(); // 플레이어 애니멀 랜덤 배치
     }
 
     // 애니멀 배치
@@ -188,24 +198,34 @@ public class GameManager : MonoBehaviour
     }
 
     // 플레이어 애니멀 배열 랜덤 섞기 & 맞게 배치
-    private void RandomPlayerAnimals()
+    private void ShufflePlayerAnimals()
     {
         // 기존 위치 저장
-        Vector2[] tempPos = new Vector2[playerAnimals.Length];
+        savedPositions = new Vector2[playerAnimals.Length];
 
         for (int i = 0; i < playerAnimals.Length; i++)
         {
-            tempPos[i] = playerAnimals[i].transform.position;
+            savedPositions[i] = playerAnimals[i].transform.position;
         }
 
         // playerAnimals 랜덤으로 섞기
-        playerAnimals = playerAnimals.OrderBy(x => UnityEngine.Random.value).Take(playerAnimals.Length).ToArray();
+        Animal[] shuffled;
+        do
+        {
+            shuffled = playerAnimals.OrderBy(x => UnityEngine.Random.value).ToArray();
+        }
+        while (shuffled.SequenceEqual(playerAnimals));
+        playerAnimals = shuffled;
 
+        // 위치 재배치
         for (int i = 0; i < playerAnimals.Length; i++)
         {
-            playerAnimals[i].transform.position = tempPos[i]; // 재배치
+            playerAnimals[i].transform.position = savedPositions[i];
         }
-    }    
+
+        // 다시하기 위한 저장
+        savedAnimals = (Animal[])playerAnimals.Clone();
+    }
 
     #endregion
 
@@ -293,7 +313,7 @@ public class GameManager : MonoBehaviour
         canSwitchAnimals.Clear();
 
         switchCount++;
-        UIManager.Instance.SwitchCountText.text = switchCount.ToString();        
+        UIManager.Instance.SwitchCountText.text = switchCount.ToString();
     }
 
     public void CancelSelect()
@@ -335,9 +355,9 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < animalCount; i++)
         {
-            computerAnimals[i].Pool.Release(computerAnimals[i].self);
-            playerAnimals[i].Pool.Release(playerAnimals[i].self);
-            playerSlots[i].Pool.Release(playerSlots[i].self);
+            computerAnimals[i].gameObject.SetActive(false);
+            playerAnimals[i].gameObject.SetActive(false);
+            playerSlots[i].gameObject.SetActive(false);
         }
 
         UIManager.Instance.ClearText.SetActive(false);
@@ -346,8 +366,64 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
-    public void StartGame()
+    public void GoMainScene()
+    {
+        SceneLoadManager.Instance.LoadScene(mainScene);
+        UIManager.Instance.ClearWindow.SetActive(false);
+    }
+
+    public void GoGameScene()
     {
         SceneLoadManager.Instance.LoadScene(gameScene);
+    }
+
+    public void Retry()
+    {
+        switchCount = 0;
+        UIManager.Instance.SwitchCountText.text = switchCount.ToString();
+
+        UIManager.Instance.SwitchTitleText.SetActive(true);
+        UIManager.Instance.SwitchCountText.gameObject.SetActive(true);
+        UIManager.Instance.ClearWindow.SetActive(false);
+
+        // 기존 애니멀 배열로 다시 배치
+        playerAnimals = (Animal[])savedAnimals.Clone();
+
+        for (int i = 0; i < animalCount; i++)
+        {
+            playerAnimals[i].transform.position = savedPositions[i];
+            playerAnimals[i].gameObject.SetActive(true);
+            playerSlots[i].gameObject.SetActive(true);
+
+            if (curGameMode == GameMode.Normal) computerAnimals[i].gameObject.SetActive(true);
+            else if (curGameMode == GameMode.Blind) playerSlots[i].SpriteRenderer.gameObject.SetActive(true);
+        }
+    }
+
+    public void SetGameMode()
+    {
+        if (curGameMode == GameMode.Normal) curGameMode = GameMode.Blind;
+        else if (curGameMode == GameMode.Blind) curGameMode = GameMode.Normal;
+
+        UIManager.Instance.ModeTextBG.text = UIManager.Instance.ModeText.text = Enum.GetName(typeof(GameMode), curGameMode);
+    }
+
+    public void PlusAnimalCount()
+    {
+        UIManager.Instance.CountRightBtn.SetActive(true);
+        animalCount++;
+        UIManager.Instance.AnimalCountTextBG.text = UIManager.Instance.AnimalCountText.text = animalCount.ToString();
+
+        if (animalCount == 12) UIManager.Instance.CountRightBtn.SetActive(false);
+        else if (animalCount == 5) UIManager.Instance.CountLeftBtn.SetActive(true);
+    }
+
+    public void MinusAnimalCount()
+    {        
+        animalCount--;
+        UIManager.Instance.AnimalCountTextBG.text = UIManager.Instance.AnimalCountText.text = animalCount.ToString();
+
+        if (animalCount == 4) UIManager.Instance.CountLeftBtn.SetActive(false);
+        else if (animalCount == 11) UIManager.Instance.CountRightBtn.SetActive(true);
     }
 }

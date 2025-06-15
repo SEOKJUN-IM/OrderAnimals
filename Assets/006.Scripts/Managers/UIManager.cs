@@ -3,6 +3,28 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("메인 UI")]
+    [SerializeField] private GameObject mainCanvas;
+    public GameObject MainCanvas { get => mainCanvas; }
+
+    [SerializeField] private TextMeshProUGUI modeTextBG;
+    public TextMeshProUGUI ModeTextBG { get => modeTextBG; }
+
+    [SerializeField] private TextMeshProUGUI modeText;
+    public TextMeshProUGUI ModeText { get => modeText; }
+
+    [SerializeField] private TextMeshProUGUI animalCountTextBG;
+    public TextMeshProUGUI AnimalCountTextBG { get => animalCountTextBG; }
+
+    [SerializeField] private TextMeshProUGUI animalCountText;
+    public TextMeshProUGUI AnimalCountText { get => animalCountText; }
+
+    [SerializeField] private GameObject countLeftBtn;
+    public GameObject CountLeftBtn { get => countLeftBtn; }
+
+    [SerializeField] private GameObject countRightBtn;
+    public GameObject CountRightBtn { get => countRightBtn; }
+
     [Header("게임 UI")]
     [SerializeField] private TextMeshProUGUI warningText;
     public TextMeshProUGUI WarningText { get => warningText; }
