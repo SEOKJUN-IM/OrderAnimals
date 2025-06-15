@@ -5,16 +5,10 @@ public class UIManager : MonoBehaviour
 {
     [Header("메인 UI")]
     [SerializeField] private GameObject mainCanvas;
-    public GameObject MainCanvas { get => mainCanvas; }
-
-    [SerializeField] private TextMeshProUGUI modeTextBG;
-    public TextMeshProUGUI ModeTextBG { get => modeTextBG; }
+    public GameObject MainCanvas { get => mainCanvas; }    
 
     [SerializeField] private TextMeshProUGUI modeText;
-    public TextMeshProUGUI ModeText { get => modeText; }
-
-    [SerializeField] private TextMeshProUGUI animalCountTextBG;
-    public TextMeshProUGUI AnimalCountTextBG { get => animalCountTextBG; }
+    public TextMeshProUGUI ModeText { get => modeText; }    
 
     [SerializeField] private TextMeshProUGUI animalCountText;
     public TextMeshProUGUI AnimalCountText { get => animalCountText; }

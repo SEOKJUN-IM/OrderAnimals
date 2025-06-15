@@ -405,14 +405,13 @@ public class GameManager : MonoBehaviour
         if (curGameMode == GameMode.Normal) curGameMode = GameMode.Blind;
         else if (curGameMode == GameMode.Blind) curGameMode = GameMode.Normal;
 
-        UIManager.Instance.ModeTextBG.text = UIManager.Instance.ModeText.text = Enum.GetName(typeof(GameMode), curGameMode);
+        UIManager.Instance.ModeText.text = Enum.GetName(typeof(GameMode), curGameMode);
     }
 
     public void PlusAnimalCount()
-    {
-        UIManager.Instance.CountRightBtn.SetActive(true);
+    {        
         animalCount++;
-        UIManager.Instance.AnimalCountTextBG.text = UIManager.Instance.AnimalCountText.text = animalCount.ToString();
+        UIManager.Instance.AnimalCountText.text = animalCount.ToString();
 
         if (animalCount == 12) UIManager.Instance.CountRightBtn.SetActive(false);
         else if (animalCount == 5) UIManager.Instance.CountLeftBtn.SetActive(true);
@@ -421,7 +420,7 @@ public class GameManager : MonoBehaviour
     public void MinusAnimalCount()
     {        
         animalCount--;
-        UIManager.Instance.AnimalCountTextBG.text = UIManager.Instance.AnimalCountText.text = animalCount.ToString();
+        UIManager.Instance.AnimalCountText.text = animalCount.ToString();
 
         if (animalCount == 4) UIManager.Instance.CountLeftBtn.SetActive(false);
         else if (animalCount == 11) UIManager.Instance.CountRightBtn.SetActive(true);
