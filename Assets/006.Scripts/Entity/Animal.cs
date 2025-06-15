@@ -10,19 +10,23 @@ public class Animal : MonoBehaviour, IPoolable, IPointerDownHandler, IPointerEnt
     public GameObject self => this.gameObject;
 
     [Header("Type")]
-    public OwnerType ownerType; // 소유자 타입 (컴퓨터 또는 플레이어)
+    private OwnerType ownerType; // 소유자 타입 (컴퓨터 또는 플레이어)
+    public OwnerType OwnerType { get => ownerType; set => ownerType = value; }
 
-    public int index;
+    private int index;
+    public int Index { get => index; set => index = value; }
 
     [Header("Animal Sprite")]
-    public SpriteRenderer spriteRenderer;
-    public Animator animator;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    public SpriteRenderer SpriteRenderer { get => spriteRenderer; }
+
+    [SerializeField] private Animator animator;    
 
     public void OnPointerDown(PointerEventData eventData)
     {
         if (ownerType == OwnerType.Computer) return; // 컴퓨터 소유의 동물은 클릭할 수 없음
 
-        GameManager.Instance.Select(this);        
+        GameManager.Instance.Select(this);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -35,5 +39,10 @@ public class Animal : MonoBehaviour, IPoolable, IPointerDownHandler, IPointerEnt
     {
         if (ownerType == OwnerType.Computer) return; // 컴퓨터 소유의 동물은 클릭할 수 없음
         animator.SetBool("OnPointer", false);
+    }
+
+    public void OnOffSelectedAnimation()
+    {
+        animator.SetBool("Selected", !animator.GetBool("Selected"));
     }
 }

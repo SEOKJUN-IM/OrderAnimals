@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -9,11 +8,14 @@ public class Slot : MonoBehaviour, IPoolable
 
     public GameObject self => this.gameObject;    
 
-    public int index;
+    private int index;
+    public int Index { get => index; set => index = value; }
 
-    public SpriteRenderer spriteRenderer;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    public SpriteRenderer SpriteRenderer { get => spriteRenderer; }
 
-    public Animal curAnimal;    
+    private Animal curAnimal;
+    public Animal CurAnimal { get => curAnimal; }   
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -21,8 +23,8 @@ public class Slot : MonoBehaviour, IPoolable
         {
             curAnimal = animal;
 
-            if (curAnimal.index == index) spriteRenderer.color = Color.green;
-            else if (Mathf.Abs(curAnimal.index - index) == 1) spriteRenderer.color = Color.orange;
+            if (curAnimal.Index == index) spriteRenderer.color = Color.green;
+            else if (Mathf.Abs(curAnimal.Index - index) == 1) spriteRenderer.color = Color.orange;
             else spriteRenderer.color = Color.red;            
         }
     }

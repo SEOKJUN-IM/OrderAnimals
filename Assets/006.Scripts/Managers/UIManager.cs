@@ -4,12 +4,23 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     [Header("게임 UI")]
-    public TextMeshProUGUI warningText;
-    public GameObject selectedMarks;
-    public GameObject leftMark;
-    public GameObject rightMark;
-    public GameObject switchTitleText;
-    public TextMeshProUGUI switchCountText;
+    [SerializeField] private TextMeshProUGUI warningText;
+    public TextMeshProUGUI WarningText { get => warningText; }
+
+    [SerializeField] private GameObject selectedMarks;
+    public GameObject SelectedMarks { get => selectedMarks; }
+
+    [SerializeField] private GameObject leftMark;
+    public GameObject LeftMark { get => leftMark; }
+
+    [SerializeField] private GameObject rightMark;
+    public GameObject RightMark { get => rightMark; }
+
+    [SerializeField] private GameObject switchTitleText;
+    public GameObject SwitchTitleText { get => switchTitleText; }
+
+    [SerializeField] private TextMeshProUGUI switchCountText;
+    public TextMeshProUGUI SwitchCountText { get => switchCountText; }
 
     private static UIManager _instance;
     public static UIManager Instance

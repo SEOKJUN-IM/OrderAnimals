@@ -7,7 +7,7 @@ public class ObjectPoolManager : MonoBehaviour
     [SerializeField] private int defaultCapacity;
     [SerializeField] private int maxPoolSize;
 
-    public GameObject[] poolObjPrefabs; // 프리팹 배열
+    [SerializeField] private GameObject[] poolObjPrefabs; // 프리팹 배열
 
     private Dictionary<GameObject, ObjectPool<GameObject>> pools = new Dictionary<GameObject, ObjectPool<GameObject>>();
     private Dictionary<GameObject, GameObject> poolContainers = new Dictionary<GameObject, GameObject>();

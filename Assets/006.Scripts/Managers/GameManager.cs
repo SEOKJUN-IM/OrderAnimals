@@ -8,15 +8,15 @@ using UnityEngine.AddressableAssets;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameMode
+    private enum GameMode
     {
         Normal,
         Blind
     }       
 
     [Header("게임 설정")]
-    public GameMode curGameMode;
-    [Range(4, 12)] public int animalCount;
+    [SerializeField] private GameMode curGameMode;
+    [SerializeField, Range(4, 12)] private int animalCount;
 
     [Header("에셋")]
     [SerializeField] private AssetReference mainScene; // 메인 씬 에셋 레퍼런스 
@@ -65,10 +65,10 @@ public class GameManager : MonoBehaviour
     public void Initialize()
     {        
         switchCount = 0;
-        UIManager.Instance.switchCountText.text = switchCount.ToString();
+        UIManager.Instance.SwitchCountText.text = switchCount.ToString();
 
-        UIManager.Instance.switchTitleText.SetActive(true);
-        UIManager.Instance.switchCountText.gameObject.SetActive(true);
+        UIManager.Instance.SwitchTitleText.SetActive(true);
+        UIManager.Instance.SwitchCountText.gameObject.SetActive(true);
 
         SetSlotsAndAnimals();        
     }
@@ -87,11 +87,11 @@ public class GameManager : MonoBehaviour
         {
             Animal animal = ObjectPoolManager.Instance.Get("Animal").GetComponent<Animal>();            
 
-            animal.ownerType = (i % 2 != 0) ? OwnerType.Computer : OwnerType.Player; // 홀수 인덱스는 컴퓨터, 짝수 인덱스는 플레이어            
+            animal.OwnerType = (i % 2 != 0) ? OwnerType.Computer : OwnerType.Player; // 홀수 인덱스는 컴퓨터, 짝수 인덱스는 플레이어            
 
             if (i % 2 != 0) // 컴퓨터 : 홀수 인덱스 yPosition은 3f
             {
-                animal.index = (i - 1) / 2; // 홀수 인덱스는 0부터 시작하는 인덱스                
+                animal.Index = (i - 1) / 2; // 홀수 인덱스는 0부터 시작하는 인덱스                
 
                 SetAnimalSprites(animal); // 애니멀 스프라이트 설정
                 SetAnimalPosition(animal, 3f);
@@ -100,11 +100,11 @@ public class GameManager : MonoBehaviour
             }
             else // 짝수 인덱스 yPosition은 -2f
             {
-                animal.index = i / 2; // 플레이어 : 짝수 인덱스는 0부터 시작하는 인덱스                
+                animal.Index = i / 2; // 플레이어 : 짝수 인덱스는 0부터 시작하는 인덱스                
 
                 SetAnimalSprites(animal); // 애니멀 스프라이트 설정
                 SetAnimalPosition(animal, -2f);
-                playerAnimals[animal.index] = animal;
+                playerAnimals[animal.Index] = animal;
             }
         }
 
@@ -112,12 +112,12 @@ public class GameManager : MonoBehaviour
         {
             Slot slot = ObjectPoolManager.Instance.Get("Slot").GetComponent<Slot>();
 
-            slot.index = playerAnimals[i].index;
+            slot.Index = playerAnimals[i].Index;
             slot.transform.position = playerAnimals[i].transform.position;
-            playerSlots[slot.index] = slot;
+            playerSlots[slot.Index] = slot;
 
-            if (curGameMode == GameMode.Normal) slot.spriteRenderer.gameObject.SetActive(false);
-            else slot.spriteRenderer.gameObject.transform.position += Vector3.up * 5f;
+            if (curGameMode == GameMode.Normal) slot.SpriteRenderer.gameObject.SetActive(false);
+            else slot.SpriteRenderer.gameObject.transform.position += Vector3.up * 5f;
         }
 
         ReleaseSpriteAssets(); // 사용한 스프라이트 에셋 해제
@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        animal.transform.position = new Vector2(animalPositions[animal.index], yPosition);
+        animal.transform.position = new Vector2(animalPositions[animal.Index], yPosition);
     }
 
     // 애니멀 스프라이트 에셋에서 랜덤으로 가져와 animalCount 크기 배열 생성
@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
     // 애니멀 스프라이트 할당
     private void SetAnimalSprites(Animal animal)
     {
-        animal.spriteRenderer.sprite = animalSpritesArray[animal.index];
+        animal.SpriteRenderer.sprite = animalSpritesArray[animal.Index];
     }
 
     // 애니멀 스프라이트 할당 후 에셋 릴리즈
@@ -210,29 +210,29 @@ public class GameManager : MonoBehaviour
         if (firstAnimal == null) // 첫 번째 선택 애니멀 없다면
         {
             firstAnimal = animal; // 클릭한 것 첫 번째 선택 애니멀로
-            animal.animator.SetBool("Selected", !animal.animator.GetBool("Selected"));
+            animal.OnOffSelectedAnimation();
 
-            UIManager.Instance.selectedMarks.SetActive(true);
-            UIManager.Instance.selectedMarks.transform.position = Camera.main.WorldToScreenPoint(firstAnimal.transform.position + Vector3.up);
+            UIManager.Instance.SelectedMarks.SetActive(true);
+            UIManager.Instance.SelectedMarks.transform.position = Camera.main.WorldToScreenPoint(firstAnimal.transform.position + Vector3.up);
 
             if (firstAnimal == playerAnimals[0])
             {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) + 1]); // 첫 번째 애니멀이 가장 왼쪽일 때
-                UIManager.Instance.leftMark.SetActive(false);
-                UIManager.Instance.rightMark.SetActive(true);
+                UIManager.Instance.LeftMark.SetActive(false);
+                UIManager.Instance.RightMark.SetActive(true);
             }
             else if (firstAnimal == playerAnimals[playerAnimals.Length - 1])
             {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) - 1]); // 첫 번째 애니멀이 가장 오른쪽일 때
-                UIManager.Instance.leftMark.SetActive(true);
-                UIManager.Instance.rightMark.SetActive(false);
+                UIManager.Instance.LeftMark.SetActive(true);
+                UIManager.Instance.RightMark.SetActive(false);
             }
             else
             {
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) - 1]);
                 canSwitchAnimals.Add(playerAnimals[Array.IndexOf(playerAnimals, animal) + 1]);
-                UIManager.Instance.leftMark.SetActive(true);
-                UIManager.Instance.rightMark.SetActive(true);
+                UIManager.Instance.LeftMark.SetActive(true);
+                UIManager.Instance.RightMark.SetActive(true);
             }
         }
         else // 첫 번째 선택 애니멀 있다면
@@ -240,31 +240,31 @@ public class GameManager : MonoBehaviour
             if (canSwitchAnimals.Contains(animal)) // 양 옆 교환 가능한 애니멀들 중 하나 클릭했다면
             {
                 secondAnimal = animal; // 클릭한 것 두 번째 선택 애니멀로
-                animal.animator.SetBool("Selected", !animal.animator.GetBool("Selected"));
+                animal.OnOffSelectedAnimation();
                 SwitchAnimals(); // 위치, 배열 순서 교환
-                Clear().Forget(); // 클리어 판단
+                GameClear().Forget(); // 클리어 판단
             }
             else
             {
                 if (firstAnimal == animal) CancelSelect();
                 else
                 {
-                    if (UIManager.Instance.warningText.gameObject.activeSelf) return;
+                    if (UIManager.Instance.WarningText.gameObject.activeSelf) return;
 
-                    UIManager.Instance.warningText.color = Color.white;
-                    UIManager.Instance.warningText.gameObject.SetActive(true);
-                    UIManager.Instance.warningText.DOFade(0f, 0.75f).SetEase(Ease.InExpo).onComplete += () => UIManager.Instance.warningText.gameObject.SetActive(false);
+                    UIManager.Instance.WarningText.color = Color.white;
+                    UIManager.Instance.WarningText.gameObject.SetActive(true);
+                    UIManager.Instance.WarningText.DOFade(0f, 0.75f).SetEase(Ease.InExpo).onComplete += () => UIManager.Instance.WarningText.gameObject.SetActive(false);
                 }
             }
         }
     }
 
-    public void SwitchAnimals()
+    private void SwitchAnimals()
     {
         if (firstAnimal == null || secondAnimal == null) return;
 
         // 첫 번째 애니멀 선택 표시 해제
-        UIManager.Instance.selectedMarks.SetActive(false);
+        UIManager.Instance.SelectedMarks.SetActive(false);
 
         // 첫 번째 애니멀과 두 번째 애니멀의 위치를 교환
         Vector2 tempPosition = firstAnimal.transform.position;
@@ -278,32 +278,32 @@ public class GameManager : MonoBehaviour
         playerAnimals[secondIndex] = firstAnimal;
 
         // 첫 번째 애니멀과 두 번째 애니멀을 초기화
-        firstAnimal.animator.SetBool("Selected", false);
-        secondAnimal.animator.SetBool("Selected", false);
+        firstAnimal.OnOffSelectedAnimation();
+        secondAnimal.OnOffSelectedAnimation();
 
         firstAnimal = null;
         secondAnimal = null;
         canSwitchAnimals.Clear();
 
         switchCount++;
-        UIManager.Instance.switchCountText.text = switchCount.ToString();        
+        UIManager.Instance.SwitchCountText.text = switchCount.ToString();        
     }
 
     public void CancelSelect()
     {
         if (firstAnimal != null)
         {
-            firstAnimal.animator.SetBool("Selected", false);
-            UIManager.Instance.selectedMarks.SetActive(false);
+            firstAnimal.OnOffSelectedAnimation();
+            UIManager.Instance.SelectedMarks.SetActive(false);
             firstAnimal = null;
         }
     }
 
-    private async UniTask Clear()
+    private async UniTask GameClear()
     {
         await UniTask.Delay(TimeSpan.FromSeconds(0.5d));
 
-        if (playerSlots.All(x => x.index == x.curAnimal.index))
+        if (playerSlots.All(x => x.Index == x.CurAnimal.Index))
         {
             Debug.Log("Clear");
         }
