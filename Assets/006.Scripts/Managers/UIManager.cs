@@ -22,6 +22,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI switchCountText;
     public TextMeshProUGUI SwitchCountText { get => switchCountText; }
 
+    [Header("게임클리어 UI")]
+    [SerializeField] private GameObject clearText;
+    public GameObject ClearText { get => clearText; }
+
+    [SerializeField] private GameObject clearWindow;
+    public GameObject ClearWindow { get => clearWindow; }
+
     private static UIManager _instance;
     public static UIManager Instance
     {

@@ -16,12 +16,12 @@ MonoBehaviour:
   m_GUID: 7fe9bf8b774d3ee46a98b6300fa385c9
   m_SerializeEntries:
   - m_GUID: 838b5d81d9968e340aa97ff2e77f52b7
-    m_Address: Assets/001.Scenes/002.StartScene.unity
+    m_Address: Assets/001.Scenes/002.MainScene.unity
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: adf1862ef066bde44ac56847bc51e968
-    m_Address: Assets/001.Scenes/003.MainScene.unity
+    m_Address: Assets/001.Scenes/003.GameScene.unity
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

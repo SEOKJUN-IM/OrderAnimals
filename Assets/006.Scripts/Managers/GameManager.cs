@@ -19,11 +19,14 @@ public class GameManager : MonoBehaviour
     [SerializeField, Range(4, 12)] private int animalCount;
 
     [Header("에셋")]
-    [SerializeField] private AssetReference mainScene; // 메인 씬 에셋 레퍼런스 
+    [SerializeField] private AssetReference gameScene; // 게임 씬 에셋 레퍼런스 
     [SerializeField] private AssetReference[] animalSprites; // 애니멀 스프라이트들
     private AssetReference[] randomSprites; // 랜덤으로 선택된 애니멀 스프라이트들
     private Sprite[] animalSpritesArray; // 애니멀 스프라이트 배열
 
+    // 컴퓨터 애니멀
+    private Animal[] computerAnimals;
+    
     // 플레이어 애니멀 & 슬롯
     private Animal[] playerAnimals;
     private Slot[] playerSlots;
@@ -76,6 +79,9 @@ public class GameManager : MonoBehaviour
     // 슬롯 켜주고 컴퓨터, 플레이어 구분, 위치 선정
     private void SetSlotsAndAnimals()
     {
+        // 컴퓨터 애니멀 담아둘 배열 생성
+        computerAnimals = new Animal[animalCount];
+
         // 플레이어 애니멀 & 슬롯 담아둘 배열 생성
         playerAnimals = new Animal[animalCount];
         playerSlots = new Slot[animalCount];
@@ -95,6 +101,7 @@ public class GameManager : MonoBehaviour
 
                 SetAnimalSprites(animal); // 애니멀 스프라이트 설정
                 SetAnimalPosition(animal, 3f);
+                computerAnimals[animal.Index] = animal;
 
                 if (curGameMode == GameMode.Blind) animal.gameObject.SetActive(false);
             }
@@ -305,14 +312,42 @@ public class GameManager : MonoBehaviour
 
         if (playerSlots.All(x => x.Index == x.CurAnimal.Index))
         {
-            Debug.Log("Clear");
+            UIManager.Instance.SwitchTitleText.SetActive(false);
+            UIManager.Instance.SwitchCountText.gameObject.SetActive(false);
+            UIManager.Instance.ClearText.SetActive(true);
+
+            if (curGameMode == GameMode.Blind)
+            {
+                for (int i = 0; i < animalCount; i++)
+                {
+                    playerSlots[i].SpriteRenderer.gameObject.SetActive(false);
+                    computerAnimals[i].gameObject.SetActive(true);
+                }
+            }
+
+            ShowClearScreen().Forget();
         }
+    }
+
+    private async UniTask ShowClearScreen()
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(2d));
+
+        for (int i = 0; i < animalCount; i++)
+        {
+            computerAnimals[i].Pool.Release(computerAnimals[i].self);
+            playerAnimals[i].Pool.Release(playerAnimals[i].self);
+            playerSlots[i].Pool.Release(playerSlots[i].self);
+        }
+
+        UIManager.Instance.ClearText.SetActive(false);
+        UIManager.Instance.ClearWindow.SetActive(true);
     }
 
     #endregion
 
     public void StartGame()
     {
-        SceneLoadManager.Instance.LoadScene(mainScene);
+        SceneLoadManager.Instance.LoadScene(gameScene);
     }
 }

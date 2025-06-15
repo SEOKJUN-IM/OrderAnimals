@@ -3,10 +3,10 @@ using UnityEngine.AddressableAssets;
 
 public class BootStrapper : MonoBehaviour
 {
-    [SerializeField] private AssetReference startScene;
+    [SerializeField] private AssetReference mainScene;
 
     void Start()
     {
-        SceneLoadManager.Instance.LoadScene(startScene);
+        SceneLoadManager.Instance.LoadScene(mainScene);
     }
 }

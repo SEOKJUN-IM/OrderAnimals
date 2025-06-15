@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoadManager : MonoBehaviour
 {
-    [SerializeField] private string mainSceneName; // 메인 씬 이름
+    [SerializeField] private string gameSceneName; // 게임 씬 이름
 
     private static SceneLoadManager _instance;
     public static SceneLoadManager Instance
@@ -44,7 +44,7 @@ public class SceneLoadManager : MonoBehaviour
 
             await sceneInstance.ActivateAsync();
             
-            if (sceneInstance.Scene.isLoaded && sceneInstance.Scene.name == mainSceneName) GameManager.Instance.Initialize();           
+            if (sceneInstance.Scene.isLoaded && sceneInstance.Scene.name == gameSceneName) GameManager.Instance.Initialize();           
         }               
     }
 
