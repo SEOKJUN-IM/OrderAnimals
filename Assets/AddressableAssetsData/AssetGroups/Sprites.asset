@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Sprites
   m_GUID: c0f835fe19c817440a1fb47bc6cd8d4d
   m_SerializeEntries:
+  - m_GUID: 0983c6be1808b6a4a8ce6163fc00fb8b
+    m_Address: Assets/002.Sprites/UI/png/Star/Active.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 38332d41df7af52429359b33ed463964
     m_Address: Assets/002.Sprites/Osprey front.png
     m_ReadOnly: 0
@@ -67,6 +72,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: af13bdfed5e41c34b8e0c9bd73227203
     m_Address: Assets/002.Sprites/wolf front.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca50ce88506ab794086fc4ad0d2036b8
+    m_Address: Assets/002.Sprites/UI/png/Star/Unactive.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

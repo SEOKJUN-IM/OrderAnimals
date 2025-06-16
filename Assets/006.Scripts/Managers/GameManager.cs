@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AssetReference[] animalSprites; // 애니멀 스프라이트들
     private AssetReference[] randomSprites; // 랜덤으로 선택된 애니멀 스프라이트들
     private Sprite[] animalSpritesArray; // 애니멀 스프라이트 배열
+    [SerializeField] private AssetReference[] starSprites; // 별 스프라이트들
+    private Sprite[] starSpritesArray;    
 
     // 컴퓨터 애니멀
     private Animal[] computerAnimals;
@@ -375,7 +377,40 @@ public class GameManager : MonoBehaviour
         }
 
         UIManager.Instance.ClearText.SetActive(false);
+
+        SetResultStars();
+        UIManager.Instance.ResultSwitchCountText.text = switchCount.ToString();
         UIManager.Instance.ClearWindow.SetActive(true);
+    }
+
+    private void SetResultStars()
+    {
+        // 별 에셋에서 sprite로 변환 저장
+        starSpritesArray = new Sprite[starSprites.Length];
+
+        for (int i = 0; i < starSprites.Length; i++)
+        {
+            starSpritesArray[i] = starSprites[i].LoadAssetAsync<Sprite>().WaitForCompletion();
+        }
+
+        void SetStarUI(int first, int second, int third)
+        {
+            UIManager.Instance.Stars[0].sprite = starSpritesArray[first];
+            UIManager.Instance.Stars[1].sprite = starSpritesArray[second];
+            UIManager.Instance.Stars[2].sprite = starSpritesArray[third];
+        }
+
+        // switchCount 별 개수 세팅
+        if (switchCount >= minSwitchCount * 1.9f) SetStarUI(0, 0, 0);
+        else if (switchCount >= minSwitchCount * 1.6f) SetStarUI(1, 0, 0);
+        else if (switchCount >= minSwitchCount * 1.3f) SetStarUI(1, 1, 0);
+        else if (switchCount >= minSwitchCount) SetStarUI(1, 1, 1);
+
+        // 별 에셋 Release
+        for (int i = 0; i < starSprites.Length; i++)
+        {
+            starSprites[i].ReleaseAsset();
+        }
     }
 
     #endregion

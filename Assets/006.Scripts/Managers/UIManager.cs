@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -50,6 +51,12 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject clearWindow;
     public GameObject ClearWindow { get => clearWindow; }
+
+    [SerializeField] private Image[] stars;
+    public Image[] Stars { get => stars; }
+
+    [SerializeField] private TextMeshProUGUI resultSwitchCountText;
+    public TextMeshProUGUI ResultSwitchCountText { get => resultSwitchCountText; }
 
     private static UIManager _instance;
     public static UIManager Instance
