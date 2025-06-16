@@ -32,11 +32,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject rightMark;
     public GameObject RightMark { get => rightMark; }
 
-    [SerializeField] private GameObject switchTitleText;
-    public GameObject SwitchTitleText { get => switchTitleText; }
+    [SerializeField] private GameObject countTexts;
+    public GameObject CountTexts { get => countTexts; }
+
+    [SerializeField] private TextMeshProUGUI minSwitchCountText;
+    public TextMeshProUGUI MinSwitchCountText { get => minSwitchCountText; }
 
     [SerializeField] private TextMeshProUGUI switchCountText;
     public TextMeshProUGUI SwitchCountText { get => switchCountText; }
+
+    [SerializeField] private TextMeshProUGUI maxSwitchCountText;
+    public TextMeshProUGUI MaxSwitchCountText { get => maxSwitchCountText; }
 
     [Header("게임클리어 UI")]
     [SerializeField] private GameObject clearText;

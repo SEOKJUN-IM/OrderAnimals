@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour
     private List<Animal> canSwitchAnimals = new List<Animal>();
 
     private int switchCount; // 교환 횟수
+    private int minSwitchCount; // 최소 교환 횟수
+    private int maxSwitchCount; // 최대 교환 횟수
 
     // 다시하기 위한 저장
     private Animal[] savedAnimals;
@@ -75,8 +77,7 @@ public class GameManager : MonoBehaviour
         switchCount = 0;
         UIManager.Instance.SwitchCountText.text = switchCount.ToString();
 
-        UIManager.Instance.SwitchTitleText.SetActive(true);
-        UIManager.Instance.SwitchCountText.gameObject.SetActive(true);
+        UIManager.Instance.CountTexts.SetActive(true);        
         UIManager.Instance.ClearWindow.SetActive(false);
 
         SetSlotsAndAnimals();
@@ -225,7 +226,21 @@ public class GameManager : MonoBehaviour
 
         // 다시하기 위한 저장
         savedAnimals = (Animal[])playerAnimals.Clone();
-    }
+
+        // 최소 교환 횟수 구해서 저장
+        int[] temp = new int[playerAnimals.Length];
+
+        for (int i = 0; i < playerAnimals.Length; i++)
+        {
+            temp[i] = playerAnimals[i].Index;
+        }
+
+        minSwitchCount = InversionCounter.CountWithMergeSort(temp);
+        maxSwitchCount = animalCount * (animalCount - 1) / 2;
+
+        UIManager.Instance.MinSwitchCountText.text = minSwitchCount.ToString();
+        UIManager.Instance.MaxSwitchCountText.text = maxSwitchCount.ToString();
+    }    
 
     #endregion
 
@@ -332,8 +347,7 @@ public class GameManager : MonoBehaviour
 
         if (playerSlots.All(x => x.Index == x.CurAnimal.Index))
         {
-            UIManager.Instance.SwitchTitleText.SetActive(false);
-            UIManager.Instance.SwitchCountText.gameObject.SetActive(false);
+            UIManager.Instance.CountTexts.SetActive(false);
             UIManager.Instance.ClearText.SetActive(true);
 
             if (curGameMode == GameMode.Blind)
@@ -382,8 +396,7 @@ public class GameManager : MonoBehaviour
         switchCount = 0;
         UIManager.Instance.SwitchCountText.text = switchCount.ToString();
 
-        UIManager.Instance.SwitchTitleText.SetActive(true);
-        UIManager.Instance.SwitchCountText.gameObject.SetActive(true);
+        UIManager.Instance.CountTexts.SetActive(true);
         UIManager.Instance.ClearWindow.SetActive(false);
 
         // 기존 애니멀 배열로 다시 배치
