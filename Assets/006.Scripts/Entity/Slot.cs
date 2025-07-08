@@ -6,7 +6,7 @@ public class Slot : MonoBehaviour, IPoolable
     private ObjectPool<GameObject> pool;
     public ObjectPool<GameObject> Pool { get => pool; set => pool = value; }
 
-    public GameObject self => this.gameObject;    
+    public GameObject Self => gameObject;    
 
     private int index;
     public int Index { get => index; set => index = value; }

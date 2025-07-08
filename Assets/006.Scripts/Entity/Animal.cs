@@ -7,7 +7,7 @@ public class Animal : MonoBehaviour, IPoolable, IPointerDownHandler, IPointerEnt
     private ObjectPool<GameObject> pool;
     public ObjectPool<GameObject> Pool { get => pool; set => pool = value; }
 
-    public GameObject self => this.gameObject;
+    public GameObject Self => gameObject;
 
     [Header("Type")]
     private OwnerType ownerType; // 소유자 타입 (컴퓨터 또는 플레이어)

@@ -2,15 +2,25 @@ using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections.Generic;
 
+[System.Serializable]
+public class PoolingData
+{
+    [SerializeField] private GameObject poolObjPrefab;
+    public GameObject PoolObjPrefab => poolObjPrefab;
+
+    [SerializeField] private int defaultCapacity;
+    public int DefaultCapacity => defaultCapacity;
+}
+
 public class ObjectPoolManager : MonoBehaviour
 {
-    [SerializeField] private int defaultCapacity;
     [SerializeField] private int maxPoolSize;
 
-    [SerializeField] private GameObject[] poolObjPrefabs; // 프리팹 배열
+    [SerializeField] private PoolingData[] poolingDatas;
 
     private Dictionary<GameObject, ObjectPool<GameObject>> pools = new Dictionary<GameObject, ObjectPool<GameObject>>();
-    private Dictionary<GameObject, GameObject> poolContainers = new Dictionary<GameObject, GameObject>();
+    private Dictionary<string, GameObject> poolContainers = new Dictionary<string, GameObject>();
+    public Dictionary<string, GameObject> PoolContainers => poolContainers;
 
     private static ObjectPoolManager _instance;
     public static ObjectPoolManager Instance
@@ -39,25 +49,25 @@ public class ObjectPoolManager : MonoBehaviour
 
     public void Initialize()
     {
-        foreach (var prefab in poolObjPrefabs)
+        foreach (var datas in poolingDatas)
         {
-            if (prefab == null) continue;
+            if (datas.PoolObjPrefab == null) continue;
 
             var pool = new ObjectPool<GameObject>(
-                () => CreatePooledObject(prefab),
+                () => CreatePooledObject(datas.PoolObjPrefab),
                 OnTakeFromPool,
                 OnReturnToPool,
                 OnDestroyPoolObject,
                 true,
-                defaultCapacity,
+                datas.DefaultCapacity,
                 maxPoolSize
             );
-            pools[prefab] = pool;
+            pools[datas.PoolObjPrefab] = pool;
 
             // 미리 풀 생성
-            for (int i = 0; i < defaultCapacity; i++)
+            for (int i = 0; i < datas.DefaultCapacity; i++)
             {
-                var obj = CreatePooledObject(prefab);
+                var obj = CreatePooledObject(datas.PoolObjPrefab);
                 pool.Release(obj);
             }
         }
@@ -76,17 +86,16 @@ public class ObjectPoolManager : MonoBehaviour
 
     public GameObject Get(string prefabName)
     {
-        foreach (var prefab in poolObjPrefabs)
+        foreach (var data in poolingDatas)
         {
-            if (prefab != null && prefab.name == prefabName)
+            if (data.PoolObjPrefab != null && data.PoolObjPrefab.name == prefabName)
             {
-                return Get(prefab);
+                return Get(data.PoolObjPrefab);
             }
         }
         Debug.LogError($"[ObjectPoolManager] {prefabName} 프리팹을 찾을 수 없습니다.");
         return null;
     }
-
 
     // 오브젝트 풀에 오브젝트 반환
     public void Release(GameObject prefab, GameObject obj)
@@ -102,17 +111,30 @@ public class ObjectPoolManager : MonoBehaviour
         }
     }
 
+    // active 오브젝트 모두 풀에 반환
+    public void ReleaseAllActive()
+    {
+        IPoolable[] actives = GetComponentsInChildren<IPoolable>(false);
+
+        foreach (IPoolable active in actives)
+        {
+            active.Pool.Release(active.Self);
+        }
+    }
+
     // 생성
     private GameObject CreatePooledObject(GameObject prefab)
     {
-        if (!poolContainers.ContainsKey(prefab) || poolContainers[prefab] == null)
+        if (!poolContainers.ContainsKey(prefab.name) || poolContainers[prefab.name] == null)
         {
             GameObject container = new GameObject($"[PoolContainer] {prefab.name}");
-            container.transform.SetParent(transform);            
-            poolContainers[prefab] = container;
+            container.transform.SetParent(transform);
+            poolContainers.Add(prefab.name, container);
         }
 
-        GameObject poolObj = Instantiate(prefab, poolContainers[prefab].transform);
+        GameObject poolObj = Instantiate(prefab, poolContainers[prefab.name].transform);
+        poolObj.name = prefab.name;
+
         IPoolable poolable = poolObj.GetComponent<IPoolable>();
         if (poolable != null)
         {
@@ -130,6 +152,8 @@ public class ObjectPoolManager : MonoBehaviour
     // 반환
     private void OnReturnToPool(GameObject poolObj)
     {
+        if (poolObj.transform.parent != poolContainers[poolObj.name]) poolObj.transform.SetParent(poolContainers[poolObj.name].transform);
+
         poolObj.SetActive(false);
     }
 
